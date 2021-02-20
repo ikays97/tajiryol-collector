@@ -76,13 +76,22 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             DataCell(
                               Text(
                                 d["ady"],
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
+                                style: TextStyle(),
                               ),
                             ),
                             DataCell(
-                              Text("${d["mocberi"]}" + " ${d["unit"]}"),
+                              Row(
+                                children: [
+                                  Text(
+                                    "x${d["mocberi"]}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Text(" ${d["unit"]}"),
+                                ],
+                              ),
                             ),
                             DataCell(
                               Text(
@@ -90,7 +99,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                 style: TextStyle(
                                   color: Color(0xff00987e),
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14,
                                 ),
                               ),
                             ),
@@ -137,11 +145,35 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               text: 'Kabul et',
               color: Color(0xff00c9a7),
               splashColor: Color(0xff008a24),
+              onTap: _acceptFunction,
             ),
           ],
         ),
       ),
     );
+  }
+
+  _acceptFunction(BuildContext ctx) {
+    return showDialog(
+        context: ctx,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  child: Center(
+                    child: Text('Nailwo'),
+                  ),
+                ), // top part
+              ],
+            ),
+          );
+        });
   }
 }
 
@@ -151,22 +183,24 @@ class MyCustomButton extends StatelessWidget {
     this.text,
     this.color,
     this.splashColor,
+    this.onTap,
   }) : super(key: key);
   final String text;
   final Color color;
   final Color splashColor;
+  final Function onTap;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: InkWell(
-        customBorder: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        splashColor: splashColor,
-        onTap: () {},
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: InkWell(
+          customBorder: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          splashColor: splashColor,
+          onTap: () {},
           child: Ink(
             decoration: BoxDecoration(
               color: color,
@@ -345,7 +379,7 @@ List<Map> data = [
     'bahasy': 100,
   },
   {
-    'checked': false,
+    'checked': true,
     'ady': 'Jacobs 150gr',
     'mocberi': 10,
     "unit": 'sany',
