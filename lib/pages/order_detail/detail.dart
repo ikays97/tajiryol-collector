@@ -20,17 +20,17 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           style: appTitle,
         ),
       ),
-      body: Container(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              children: [
-                TopPart(),
-                Padding(
-                  padding: const EdgeInsets.only(top: 13),
-                  child: Ink(
-                    padding: EdgeInsets.all(15),
+      body: SafeArea(
+        child: Container(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                children: [
+                  TopPart(),
+                  Container(
+                    margin: EdgeInsets.only(top: 10),
+                    width: size.width,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
@@ -43,27 +43,147 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                         ),
                       ],
                     ),
-                    child: Text('asdasd'),
+                    child: DataTable(
+                      columnSpacing: 15,
+                      dataRowHeight: 60,
+                      dividerThickness: 0.5,
+                      columns: [
+                        DataColumn(label: Text('Sayla')),
+                        DataColumn(label: Text('Surat, ady')),
+                        DataColumn(label: Text('Mocberi')),
+                        DataColumn(label: Text('Bahasy')),
+                      ],
+                      rows: data.map((d) {
+                        return DataRow(
+                          color: MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                            if (d['checked'])
+                              return Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.08);
+                            return null; // Use the default value.
+                          }),
+                          cells: [
+                            DataCell(
+                              Checkbox(
+                                onChanged: (value) {
+                                  value = !value;
+                                },
+                                value: d['checked'],
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                d["ady"],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              Text("${d["mocberi"]}" + " ${d["unit"]}"),
+                            ),
+                            DataCell(
+                              Text(
+                                "${d["bahasy"]} TMT",
+                                style: TextStyle(
+                                  color: Color(0xff00987e),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                      // [
+                      // DataRow(
+                      //   cells:
+
+                      //   // [
+                      //   //   DataCell(
+                      //   //     Checkbox(
+                      //   //       value: true,
+                      //   //       onChanged: (value) {},
+                      //   //     ),
+                      //   //   ),
+                      //   //   DataCell(Text('Surat ady')),
+                      //   //   DataCell(Text('Surat ady')),
+                      //   //   DataCell(Text('Surat ady')),
+                      //   // ],
+                      // ),
+                      // ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
       bottomNavigationBar: Container(
         height: size.height * 0.08,
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        color: Color(0xff00C9A7),
-        child: Center(
-            child: Text(
-          'Eltip berildi',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
+        color: Colors.transparent,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            MyCustomButton(
+              text: 'Kabul etme',
+              color: Color(0xffff5d5d),
+              splashColor: Color(0xffff6600),
+            ),
+            MyCustomButton(
+              text: 'Kabul et',
+              color: Color(0xff00c9a7),
+              splashColor: Color(0xff008a24),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MyCustomButton extends StatelessWidget {
+  const MyCustomButton({
+    Key key,
+    this.text,
+    this.color,
+    this.splashColor,
+  }) : super(key: key);
+  final String text;
+  final Color color;
+  final Color splashColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: InkWell(
+        customBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        splashColor: splashColor,
+        onTap: () {},
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Ink(
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Center(
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 23,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
           ),
-        )),
+        ),
       ),
     );
   }
@@ -82,7 +202,7 @@ class TopPart extends StatelessWidget {
         splashFactory: InkRipple.splashFactory,
         onTap: () {},
         child: Ink(
-          height: size.height * 0.25,
+          height: size.height * 0.2,
           padding: EdgeInsets.all(18),
           decoration: BoxDecoration(
               color: Colors.white,
@@ -166,3 +286,76 @@ class OrderDetailUserItem extends StatelessWidget {
     );
   }
 }
+
+List<Map> data = [
+  {
+    'checked': false,
+    'ady': 'Jacobs 150gr',
+    'mocberi': 2,
+    "unit": 'lt',
+    'bahasy': 100,
+  },
+  {
+    'checked': true,
+    'ady': 'Jacobs 150gr',
+    'mocberi': 4,
+    "unit": 'kg',
+    'bahasy': 100,
+  },
+  {
+    'checked': false,
+    'ady': 'Jacobs 150gr',
+    'mocberi': 7,
+    "unit": 'cm',
+    'bahasy': 100,
+  },
+  {
+    'checked': false,
+    'ady': 'Jacobs 150gr',
+    'mocberi': 10,
+    "unit": 'sany',
+    'bahasy': 100,
+  },
+  {
+    'checked': true,
+    'ady': 'Jacobs 150gr',
+    'mocberi': 1,
+    "unit": 'lt',
+    'bahasy': 100,
+  },
+  {
+    'checked': false,
+    'ady': 'Jacobs 150gr',
+    'mocberi': 2,
+    "unit": 'lt',
+    'bahasy': 100,
+  },
+  {
+    'checked': true,
+    'ady': 'Jacobs 150gr',
+    'mocberi': 4,
+    "unit": 'kg',
+    'bahasy': 100,
+  },
+  {
+    'checked': false,
+    'ady': 'Jacobs 150gr',
+    'mocberi': 7,
+    "unit": 'cm',
+    'bahasy': 100,
+  },
+  {
+    'checked': false,
+    'ady': 'Jacobs 150gr',
+    'mocberi': 10,
+    "unit": 'sany',
+    'bahasy': 100,
+  },
+  {
+    'checked': true,
+    'ady': 'Jacobs 150gr',
+    'mocberi': 1,
+    "unit": 'lt',
+    'bahasy': 100,
+  },
+];
