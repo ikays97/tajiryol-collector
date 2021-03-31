@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tajiryol_collector/icons.dart';
 import 'package:tajiryol_collector/pages/order_detail/detail.dart';
 
-import '../../../constants.dart';
+String randtext = "#1636713616367138";
+
+String address = "Ashgabat, Parahat 7, jay 20, 4 oy";
 
 class Tab1 extends StatelessWidget {
   const Tab1({
@@ -31,7 +34,6 @@ class Tab1 extends StatelessWidget {
                 ),
               ],
             ),
-            height: size.height * 0.1,
             child: Material(
               color: Colors.transparent,
               child: InkWell(
@@ -42,34 +44,82 @@ class Tab1 extends StatelessWidget {
                       MaterialPageRoute(builder: (_) => OrderDetailPage()));
                 },
                 child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
                     children: [
-                      Row(
-                        children: [
-                          Text('#123456', style: tileText),
-                          Spacer(),
-                          Icon(
-                            Icons.games,
-                            color: Colors.black.withOpacity(0.4),
-                            size: 16,
-                          ),
-                          Text('15'),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              randtext,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                              ),
+                              maxLines: 1,
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SvgIcons.location,
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    address,
+                                    style: TextStyle(fontSize: 16),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      Spacer(),
-                      Row(
+                      SizedBox(width: 5),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Icon(
-                            Icons.location_on_outlined,
-                            color: Colors.black.withOpacity(0.7),
-                            size: 15,
+                          Row(
+                            children: [
+                              SvgIcons.cube,
+                              SizedBox(width: 5),
+                              Text(
+                                '15',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text('Parahat 7'),
-                          Spacer(),
-                          Text(
-                            '199 TMT',
-                            style: tilePrice,
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
+                              SvgIcons.pricetags,
+                              SizedBox(width: 8),
+                              Text.rich(
+                                TextSpan(text: '199', children: [
+                                  TextSpan(
+                                    text: " TMT",
+                                    style: TextStyle(
+                                      color: Color(0xff008A24),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ]),
+                                style: TextStyle(
+                                  color: Color(0xff008A24),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 19,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                         ],
                       ),

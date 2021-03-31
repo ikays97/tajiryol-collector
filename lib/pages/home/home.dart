@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../constants.dart';
+import 'package:tajiryol_collector/app_settings.dart';
 import 'tabs/tab1.dart';
 import 'tabs/tab2.dart';
 
@@ -15,18 +15,29 @@ class HomePage extends StatelessWidget {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(100),
           child: AppBar(
-            centerTitle: true,
+            centerTitle: false,
             title: Text(
-              "Işleriň sanawy".toUpperCase(),
-              style: appTitle,
+              "Tajiryol Toplaýjy",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
             ),
+            actions: [
+              IconButton(
+                  icon: Icon(Icons.logout, color: Colors.black54),
+                  onPressed: () {}),
+            ],
             bottom: TabBar(
               labelPadding: EdgeInsets.all(10),
-              unselectedLabelColor: Colors.black.withOpacity(0.4),
-              unselectedLabelStyle: unselectedTabText,
+              labelColor: Theme.of(context).primaryColor,
+              labelStyle: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 18,
+              ),
+              unselectedLabelColor: Colors.black.withOpacity(0.5),
               tabs: [
-                Text('Sargalanlar', style: selectedTabText),
-                Text('Kabul edilenler', style: selectedTabText),
+                Text('Sargalanlar'),
+                Text('Kabul edilenler'),
               ],
             ),
           ),

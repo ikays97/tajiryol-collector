@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="9.778" height="10.579" viewBox="0 0 9.778 10.579">
+  <g id="cube-outline" transform="translate(0.25 0.265)">
+    <path id="Path_22" data-name="Path 22" d="M73.278,55.118V50.992a.773.773,0,0,0-.384-.667l-3.672-2.137a1.158,1.158,0,0,0-1.166,0l-3.672,2.137a.773.773,0,0,0-.384.667v4.126a.773.773,0,0,0,.384.668l3.672,2.137a1.16,1.16,0,0,0,1.166,0l3.672-2.137A.773.773,0,0,0,73.278,55.118Z" transform="translate(-64 -48.03)" fill="none" stroke="#444" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5"/>
+    <path id="Path_23" data-name="Path 23" d="M69,153.99l4.518,2.658,4.518-2.658m-4.518,7.49v-4.832" transform="translate(-68.879 -151.43)" fill="none" stroke="#444" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5"/>
+  </g>
+</svg>

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
-
 class OrderDetailPage extends StatefulWidget {
   @override
   _OrderDetailPageState createState() => _OrderDetailPageState();
@@ -15,10 +13,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
       backgroundColor: Color(0xffeeeeee),
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
-          "Harytlaryň sanawy",
-          style: appTitle,
-        ),
+        title: Text("Harytlaryň sanawy"),
       ),
       body: SafeArea(
         child: Container(
@@ -304,7 +299,6 @@ class OrderDetailUserItem extends StatelessWidget {
                 SizedBox(width: 5),
                 Text(
                   text1,
-                  style: orderDetailText1,
                 ),
               ],
             ),
@@ -313,7 +307,6 @@ class OrderDetailUserItem extends StatelessWidget {
               width: size.width * 0.46,
               child: Text(
                 text2,
-                style: orderDetailText2,
               )),
         ],
       ),

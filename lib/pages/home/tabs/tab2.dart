@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../constants.dart';
-
 class Tab2 extends StatelessWidget {
   const Tab2({
     Key key,
@@ -34,7 +32,6 @@ class Tab2 extends StatelessWidget {
               ],
               border: Border(
                 left: BorderSide(
-                  color: i % 2 == 1 ? orangeIcon : greenIcon,
                   width: 5,
                 ),
               ),
@@ -52,7 +49,7 @@ class Tab2 extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text('#123456', style: tileText),
+                          Text('#123456'),
                           Spacer(),
                           Icon(
                             Icons.games,
@@ -76,7 +73,6 @@ class Tab2 extends StatelessWidget {
                           Spacer(),
                           Icon(
                             Icons.add_circle_outline,
-                            color: i % 2 == 1 ? orangeIcon : greenIcon,
                           )
                         ],
                       ),
