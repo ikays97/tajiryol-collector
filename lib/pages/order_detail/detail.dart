@@ -1,4 +1,12 @@
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:tajiryol_collector/components/indicators.dart';
+import 'package:tajiryol_collector/model/product.dart';
+import 'package:tajiryol_collector/pages/delivery_page/delivery.dart';
+
+import '../../extensions.dart';
 
 class OrderDetailPage extends StatefulWidget {
   @override
@@ -10,23 +18,19 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Color(0xffeeeeee),
       appBar: AppBar(
-        centerTitle: true,
+        centerTitle: false,
         title: Text("Harytlaryň sanawy"),
       ),
       body: SafeArea(
         child: Container(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                children: [
-                  TopPart(),
-                  Container(
-                    margin: EdgeInsets.only(top: 10),
-                    width: size.width,
-                    decoration: BoxDecoration(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(18),
+                  decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: [
@@ -36,139 +40,253 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           spreadRadius: 10,
                           color: Colors.grey[200],
                         ),
-                      ],
-                    ),
-                    child: DataTable(
-                      columnSpacing: 15,
-                      dataRowHeight: 60,
-                      dividerThickness: 0.5,
-                      columns: [
-                        DataColumn(label: Text('Sayla')),
-                        DataColumn(label: Text('Surat, ady')),
-                        DataColumn(label: Text('Mocberi')),
-                        DataColumn(label: Text('Bahasy')),
-                      ],
-                      rows: data.map((d) {
-                        return DataRow(
-                          color: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            if (d['checked'])
-                              return Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withOpacity(0.08);
-                            return null; // Use the default value.
-                          }),
-                          cells: [
-                            DataCell(
-                              Checkbox(
-                                onChanged: (value) {
-                                  value = !value;
-                                },
-                                value: d['checked'],
-                              ),
-                            ),
-                            DataCell(
-                              Text(
-                                d["ady"],
-                                style: TextStyle(),
-                              ),
-                            ),
-                            DataCell(
-                              Row(
-                                children: [
-                                  Text(
-                                    "x${d["mocberi"]}",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  Text(" ${d["unit"]}"),
-                                ],
-                              ),
-                            ),
-                            DataCell(
-                              Text(
-                                "${d["bahasy"]} TMT",
-                                style: TextStyle(
-                                  color: Color(0xff00987e),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                      // [
-                      // DataRow(
-                      //   cells:
-
-                      //   // [
-                      //   //   DataCell(
-                      //   //     Checkbox(
-                      //   //       value: true,
-                      //   //       onChanged: (value) {},
-                      //   //     ),
-                      //   //   ),
-                      //   //   DataCell(Text('Surat ady')),
-                      //   //   DataCell(Text('Surat ady')),
-                      //   //   DataCell(Text('Surat ady')),
-                      //   // ],
-                      // ),
-                      // ],
+                      ]),
+                  child: Column(
+                    children: [
+                      OrderDetailUserItem(
+                        icon: Icons.receipt_outlined,
+                        text1: "Çek nomeri:",
+                        text2: "#123456",
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _onScanTap,
+                    icon: Icon(Icons.qr_code_rounded),
+                    label: Text(
+                      'Produkt scannen',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                ],
-              ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  width: size.width,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.black.withOpacity(0.06)),
+                    boxShadow: [
+                      BoxShadow(
+                        offset: Offset(0, 3),
+                        blurRadius: 5,
+                        color: Colors.grey[200],
+                      ),
+                    ],
+                  ),
+                  child: DataTable(
+                    columnSpacing: 15,
+                    dataRowHeight: 60,
+                    dividerThickness: 0.5,
+                    showCheckboxColumn: false,
+                    columns: [
+                      DataColumn(label: Text('Kody')),
+                      DataColumn(label: Text('Ady')),
+                      DataColumn(label: Text('Mocberi')),
+                      DataColumn(label: Text('Status')),
+                    ],
+                    rows: data.map((product) {
+                      return buildTableItem(product);
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
       ),
       bottomNavigationBar: Container(
         height: size.height * 0.08,
-        color: Colors.transparent,
+        // color: Colors.white,
+        padding: const EdgeInsets.all(8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            MyCustomButton(
-              text: 'Kabul etme',
-              color: Color(0xffff5d5d),
-              splashColor: Color(0xffff6600),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ElevatedButton(
+                  onPressed: _onSubmitTap,
+                  child: AnimatedSwitcher(
+                    duration: Duration(milliseconds: 150),
+                    child:
+                        // Theme(
+                        //   data:
+                        //       Theme.of(context).copyWith(accentColor: Colors.white),
+                        //   child: ProgressIndicatorSmall(),
+                        // ),
+                        Text(
+                      'Toplandy',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  )),
             ),
-            MyCustomButton(
-              text: 'Kabul et',
-              color: Color(0xff00c9a7),
-              splashColor: Color(0xff008a24),
-              onTap: _acceptFunction,
-            ),
+            const SizedBox(width: 8),
           ],
         ),
       ),
     );
   }
 
-  _acceptFunction(BuildContext ctx) {
-    return showDialog(
-        context: ctx,
+  DataRow buildTableItem(Product product) {
+    return DataRow(
+      color:
+          MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+        if (product.checked) return Color(0xffff7b00).withOpacity(0.07);
+        return null; // Use the default value.
+      }),
+      onSelectChanged: (bool v) {
+        setState(() {
+          product.setChecked = !product.getChecked;
+        });
+      },
+      cells: [
+        DataCell(
+          SizedBox(
+            width: 30,
+            height: 30,
+            child: BarcodeWidget(
+              barcode: Barcode.code128(),
+              data: product.barcode,
+              drawText: false,
+            ),
+          ),
+        ),
+        DataCell(
+          SizedBox(
+            width: 120,
+            child: Text(
+              product.name,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+        DataCell(
+          Row(
+            children: [
+              Text(
+                "x${product.count}",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Text(product.unit),
+            ],
+          ),
+        ),
+        DataCell(Text(
+          product.checked ? "Toplandy" : "Toplanmady",
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: product.checked ? FontWeight.bold : FontWeight.w400,
+            color: product.checked ? Colors.green : Colors.red,
+          ),
+        )),
+      ],
+    );
+  }
+
+  void _onSubmitTap() async {
+    final scanned = data.where((e) => e.checked == true);
+    await showDialog(
+        context: context,
+        barrierDismissible: true,
         builder: (BuildContext context) {
-          return Dialog(
+          return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(12),
             ),
             elevation: 0,
-            backgroundColor: Colors.transparent,
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  child: Center(
-                    child: Text('Nailwo'),
+            backgroundColor: Colors.white,
+            content: Container(
+              // TODO: remove this later
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Tassykla',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
                   ),
-                ), // top part
-              ],
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Text("Toplanan haryt:"),
+                      Spacer(),
+                      Text("${scanned.length}",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text("Jemi haryt:"),
+                      Spacer(),
+                      Text("${data.length}",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ],
+              ),
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(
+                  'Yok',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => DeliveryPage()));
+                },
+                child: Text(
+                  'Hawa',
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
           );
         });
+  }
+
+  void _onScanTap() async {
+    try {
+      final barcode = await FlutterBarcodeScanner.scanBarcode(
+          "0xffff7b00", "Yza", true, ScanMode.BARCODE);
+      if (!mounted) return;
+
+      data.forEach((product) {
+        if (product.barcode == barcode) {
+          setState(() {
+            product.setChecked = !product.getChecked;
+          });
+        }
+      });
+    } on PlatformException {
+      showSnackbar(context, "Failed to get platform version");
+    }
   }
 }
 
@@ -188,80 +306,26 @@ class MyCustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: InkWell(
-          customBorder: RoundedRectangleBorder(
+      child: InkWell(
+        customBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        splashColor: splashColor,
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: color,
             borderRadius: BorderRadius.circular(15),
           ),
-          splashColor: splashColor,
-          onTap: () {},
-          child: Ink(
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Center(
-              child: Text(
-                text,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 23,
-                  fontWeight: FontWeight.w500,
-                ),
+          child: Center(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 23,
+                fontWeight: FontWeight.w500,
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class TopPart extends StatelessWidget {
-  const TopPart({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        splashColor: Colors.blue[400],
-        splashFactory: InkRipple.splashFactory,
-        onTap: () {},
-        child: Ink(
-          height: size.height * 0.2,
-          padding: EdgeInsets.all(18),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(5, 5),
-                  blurRadius: 5,
-                  spreadRadius: 10,
-                  color: Colors.grey[200],
-                ),
-              ]),
-          child: Column(
-            children: [
-              OrderDetailUserItem(
-                icon: Icons.receipt_outlined,
-                text1: "Çek nomeri:",
-                text2: "#123456",
-              ),
-              OrderDetailUserItem(
-                icon: Icons.phone_android_outlined,
-                text1: "Telefon:",
-                text2: "+993 61 465666",
-              ),
-              OrderDetailUserItem(
-                icon: Icons.location_on_outlined,
-                text1: "Salgysy:",
-                text2: "Parahat 7, Abadan koce, jay 4, Ashgabat, Turkmenistan",
-              ),
-            ],
           ),
         ),
       ),
@@ -307,6 +371,7 @@ class OrderDetailUserItem extends StatelessWidget {
               width: size.width * 0.46,
               child: Text(
                 text2,
+                style: TextStyle(fontWeight: FontWeight.bold),
               )),
         ],
       ),
@@ -314,75 +379,42 @@ class OrderDetailUserItem extends StatelessWidget {
   }
 }
 
-List<Map> data = [
-  {
-    'checked': false,
-    'ady': 'Jacobs 150gr',
-    'mocberi': 2,
-    "unit": 'lt',
-    'bahasy': 100,
-  },
-  {
-    'checked': true,
-    'ady': 'Jacobs 150gr',
-    'mocberi': 4,
-    "unit": 'kg',
-    'bahasy': 100,
-  },
-  {
-    'checked': false,
-    'ady': 'Jacobs 150gr',
-    'mocberi': 7,
-    "unit": 'cm',
-    'bahasy': 100,
-  },
-  {
-    'checked': false,
-    'ady': 'Jacobs 150gr',
-    'mocberi': 10,
-    "unit": 'sany',
-    'bahasy': 100,
-  },
-  {
-    'checked': true,
-    'ady': 'Jacobs 150gr',
-    'mocberi': 1,
-    "unit": 'lt',
-    'bahasy': 100,
-  },
-  {
-    'checked': false,
-    'ady': 'Jacobs 150gr',
-    'mocberi': 2,
-    "unit": 'lt',
-    'bahasy': 100,
-  },
-  {
-    'checked': true,
-    'ady': 'Jacobs 150gr',
-    'mocberi': 4,
-    "unit": 'kg',
-    'bahasy': 100,
-  },
-  {
-    'checked': false,
-    'ady': 'Jacobs 150gr',
-    'mocberi': 7,
-    "unit": 'cm',
-    'bahasy': 100,
-  },
-  {
-    'checked': true,
-    'ady': 'Jacobs 150gr',
-    'mocberi': 10,
-    "unit": 'sany',
-    'bahasy': 100,
-  },
-  {
-    'checked': true,
-    'ady': 'Jacobs 150gr',
-    'mocberi': 1,
-    "unit": 'lt',
-    'bahasy': 100,
-  },
+List<Product> data = [
+  Product(
+    id: "1",
+    name: "Jacobs",
+    count: 2,
+    unit: "lt",
+    checked: true,
+    barcode: "Jacobs",
+  ),
+  Product(
+    id: "1",
+    name: "Nescafe",
+    count: 2,
+    unit: "kg",
+    barcode: "Nescafe",
+  ),
+  Product(
+    id: "1",
+    name: "Gosa Cynar",
+    count: 2,
+    unit: "cm",
+    barcode: "Gosa Cynar",
+  ),
+  Product(
+    id: "1",
+    name: "Bold",
+    count: 2,
+    unit: "gr",
+    checked: true,
+    barcode: "Bold",
+  ),
+  Product(
+    id: "1",
+    name: "Koke Pay",
+    count: 2,
+    unit: "sany",
+    barcode: "Koke Pay",
+  ),
 ];

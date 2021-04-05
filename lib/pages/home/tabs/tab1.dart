@@ -2,18 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tajiryol_collector/icons.dart';
 import 'package:tajiryol_collector/pages/order_detail/detail.dart';
 
-String randtext = "#1636713616367138";
-
+String randtext = "#1636713616367138163671";
 String address = "Ashgabat, Parahat 7, jay 20, 4 oy";
 
 class Tab1 extends StatelessWidget {
-  const Tab1({
-    Key key,
-    @required this.size,
-  }) : super(key: key);
-
-  final Size size;
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -68,7 +60,7 @@ class Tab1 extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     address,
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: 15),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 3,
                                   ),
@@ -78,7 +70,7 @@ class Tab1 extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(width: 5),
+                      SizedBox(width: 15),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -95,7 +87,7 @@ class Tab1 extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 8),
+                          SizedBox(height: 9),
                           Row(
                             children: [
                               SvgIcons.pricetags,

@@ -23,7 +23,7 @@ class _CollectorAppState extends State<CollectorApp> {
     return ModelBinding(
       initialModel: AppSettings(
         locale: localeEN,
-        theme: genAppLightTheme(),
+        theme: myTheme(),
       ),
       child: Builder(
         builder: (context) {
@@ -32,10 +32,11 @@ class _CollectorAppState extends State<CollectorApp> {
           return GetMaterialApp(
             title: 'Tajiryol Collector',
             debugShowCheckedModeBanner: false,
-            theme: genAppLightTheme(),
+            theme: settings.theme,
             locale: settings?.locale,
             supportedLocales: supportedLocales,
-            builder: (context, child) => _Unfocus(child: child),
+            builder: (context, child) => _Unfocus(
+                child: child), // unfocus on tap all over surface of the app
             home: HomePage(),
           );
         },

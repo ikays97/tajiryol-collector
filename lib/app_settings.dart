@@ -4,19 +4,19 @@ import 'package:flutter/services.dart';
 const String _appFontFamily = 'Montserrat';
 const Color _textLightColor = Color(0xFF000000);
 
-const int _appPrimaryColorValue = 0xFF002821;
+const int _appPrimaryColorValue = 0xFFF29B62;
 const MaterialColor appPrimarySwatch =
     MaterialColor(_appPrimaryColorValue, <int, Color>{
-  50: Color(0xFF00c9a7),
-  100: Color(0xff00b596),
-  200: Color(0xff00a186),
-  300: Color(0xff008d75),
-  400: Color(0xff007964),
-  500: Color(0xff006554),
-  600: Color(0xff005043),
-  700: Color(0xff003c32),
-  800: Color(0xff002821),
-  900: Color(0xff001411),
+  50: Color(0xffffdd00),
+  100: Color(0xffffd000),
+  200: Color(0xffffd000),
+  300: Color(0xffffc300),
+  400: Color(0xffffb700),
+  500: Color(0xffffaa00),
+  600: Color(0xffffa200),
+  700: Color(0xffff9500),
+  800: Color(0xffff8800),
+  900: Color(0xffff7b00),
 });
 
 TextTheme _lightTextTheme(Typography typography) {
@@ -25,6 +25,47 @@ TextTheme _lightTextTheme(Typography typography) {
     fontFamily: _appFontFamily,
     displayColor: _textLightColor,
     bodyColor: _textLightColor,
+  );
+}
+
+ThemeData myTheme() {
+  final typography = Typography.material2018();
+  final lightTextTheme = _lightTextTheme(typography);
+  return ThemeData(
+    primarySwatch: appPrimarySwatch,
+    primaryColor: Color(_appPrimaryColorValue),
+    fontFamily: _appFontFamily,
+    typography: typography,
+    textTheme: lightTextTheme,
+    inputDecorationTheme: const InputDecorationTheme(
+      filled: true,
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
+            (Set<MaterialState> states) {
+          return RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ); // Use the default value.
+        }),
+        foregroundColor: MaterialStateProperty.resolveWith<Color>(
+            (Set<MaterialState> states) {
+          return Colors.white; // Use the default value.
+        }),
+      ),
+    ),
+    appBarTheme: AppBarTheme(
+      backwardsCompatibility: false,
+      backgroundColor: Color(_appPrimaryColorValue),
+      foregroundColor: _textLightColor,
+    ),
+    visualDensity: VisualDensity.adaptivePlatformDensity,
+    pageTransitionsTheme: PageTransitionsTheme(
+        builders: Map.fromIterable(
+      TargetPlatform.values,
+      key: (dynamic e) => e as TargetPlatform,
+      value: (dynamic e) => CupertinoPageTransitionsBuilder(),
+    )),
   );
 }
 

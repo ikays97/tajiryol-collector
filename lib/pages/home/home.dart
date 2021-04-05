@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tajiryol_collector/app_settings.dart';
+import 'package:tajiryol_collector/pages/login/signin.dart';
+import '../../extensions.dart';
 import 'tabs/tab1.dart';
 import 'tabs/tab2.dart';
 
@@ -11,41 +12,52 @@ class HomePage extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: Color(0xffeeeeee),
+        backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(100),
           child: AppBar(
             centerTitle: false,
             title: Text(
-              "Tajiryol Toplaýjy",
+              getCurrentTimeOfDay(),
               style: TextStyle(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
               ),
             ),
             actions: [
-              IconButton(
+              Padding(
+                padding: const EdgeInsets.only(right: 6.0),
+                child: IconButton(
                   icon: Icon(Icons.logout, color: Colors.black54),
-                  onPressed: () {}),
+                  onPressed: () => navigateTo(
+                    context,
+                    (_) => SignInPage(),
+                  ),
+                ),
+              ),
             ],
             bottom: TabBar(
               labelPadding: EdgeInsets.all(10),
-              labelColor: Theme.of(context).primaryColor,
+              // labelColor: Theme.of(context).primaryColor,
               labelStyle: TextStyle(
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 fontSize: 18,
               ),
-              unselectedLabelColor: Colors.black.withOpacity(0.5),
+              unselectedLabelStyle: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 18,
+              ),
               tabs: [
-                Text('Sargalanlar'),
-                Text('Kabul edilenler'),
+                Text('Sargytlar'),
+                Text('Tabşyrylan'),
               ],
             ),
           ),
         ),
         body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           children: [
-            Tab1(size: size),
-            Tab2(size: size),
+            Tab1(),
+            Tab2(),
           ],
         ),
         // CustomScrollView(
