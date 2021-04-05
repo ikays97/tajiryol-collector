@@ -17,7 +17,10 @@ class CollectorApp extends StatefulWidget {
 class _CollectorAppState extends State<CollectorApp> {
   Future<SharedPreferences> prefsFuture;
 
-  Widget buildInitialData(BuildContext context, SharedPreferences prefs) {
+  Widget buildInitialData(
+    BuildContext context,
+    SharedPreferences prefs,
+  ) {
     const localeEN = const Locale('en', 'EN');
     const supportedLocales = [localeEN];
     return ModelBinding(

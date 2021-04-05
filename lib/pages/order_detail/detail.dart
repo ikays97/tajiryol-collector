@@ -2,10 +2,8 @@ import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:tajiryol_collector/components/indicators.dart';
 import 'package:tajiryol_collector/model/product.dart';
 import 'package:tajiryol_collector/pages/delivery_page/delivery.dart';
-
 import '../../extensions.dart';
 
 class OrderDetailPage extends StatefulWidget {
@@ -14,6 +12,8 @@ class OrderDetailPage extends StatefulWidget {
 }
 
 class _OrderDetailPageState extends State<OrderDetailPage> {
+  String _barcode;
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -24,7 +24,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
       ),
       body: SafeArea(
         child: Container(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(15.0),
             child: Column(
               children: [
@@ -41,21 +41,17 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           color: Colors.grey[200],
                         ),
                       ]),
-                  child: Column(
-                    children: [
-                      OrderDetailUserItem(
-                        icon: Icons.receipt_outlined,
-                        text1: "Çek nomeri:",
-                        text2: "#123456",
-                      ),
-                    ],
+                  child: OrderDetailUserItem(
+                    icon: Icons.receipt_outlined,
+                    text1: "Çek nomeri:",
+                    text2: "#123456",
                   ),
                 ),
                 const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: _onScanTap,
+                    onPressed: () => _onScanTap(),
                     icon: Icon(Icons.qr_code_rounded),
                     label: Text(
                       'Produkt scannen',
@@ -184,12 +180,15 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             ],
           ),
         ),
-        DataCell(Text(
-          product.checked ? "Toplandy" : "Toplanmady",
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: product.checked ? FontWeight.bold : FontWeight.w400,
-            color: product.checked ? Colors.green : Colors.red,
+        DataCell(AnimatedContainer(
+          duration: Duration(milliseconds: 100),
+          child: Text(
+            product.checked ? "Toplandy" : "Toplanmady",
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: product.checked ? FontWeight.bold : FontWeight.w400,
+              color: product.checked ? Colors.green : Colors.red,
+            ),
           ),
         )),
       ],
@@ -271,65 +270,26 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         });
   }
 
-  void _onScanTap() async {
+  Future<void> _onScanTap() async {
+    String barcode;
     try {
-      final barcode = await FlutterBarcodeScanner.scanBarcode(
-          "0xffff7b00", "Yza", true, ScanMode.BARCODE);
-      if (!mounted) return;
-
-      data.forEach((product) {
-        if (product.barcode == barcode) {
-          setState(() {
-            product.setChecked = !product.getChecked;
-          });
-        }
-      });
+      barcode = await FlutterBarcodeScanner.scanBarcode(
+          "#ff7b00", "Yza", true, ScanMode.BARCODE);
+      print("$barcode barcode result");
     } on PlatformException {
       showSnackbar(context, "Failed to get platform version");
     }
-  }
-}
 
-class MyCustomButton extends StatelessWidget {
-  const MyCustomButton({
-    Key key,
-    this.text,
-    this.color,
-    this.splashColor,
-    this.onTap,
-  }) : super(key: key);
-  final String text;
-  final Color color;
-  final Color splashColor;
-  final Function onTap;
+    if (!mounted) return;
 
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: InkWell(
-        customBorder: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        splashColor: splashColor,
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 23,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+    setState(() {
+      // data.forEach((product) {
+      //   if (product.barcode == barcode) {
+      //     product.setChecked = !product.getChecked;
+      //   }
+      // });
+      _barcode = barcode;
+    });
   }
 }
 
@@ -385,7 +345,6 @@ List<Product> data = [
     name: "Jacobs",
     count: 2,
     unit: "lt",
-    checked: true,
     barcode: "Jacobs",
   ),
   Product(
@@ -407,12 +366,32 @@ List<Product> data = [
     name: "Bold",
     count: 2,
     unit: "gr",
-    checked: true,
     barcode: "Bold",
   ),
   Product(
     id: "1",
     name: "Koke Pay",
+    count: 2,
+    unit: "sany",
+    barcode: "Koke Pay",
+  ),
+  Product(
+    id: "1",
+    name: "Snickers",
+    count: 2,
+    unit: "sany",
+    barcode: "Koke Pay",
+  ),
+  Product(
+    id: "1",
+    name: "Coca Cola",
+    count: 2,
+    unit: "sany",
+    barcode: "Koke Pay",
+  ),
+  Product(
+    id: "1",
+    name: "Jorap",
     count: 2,
     unit: "sany",
     barcode: "Koke Pay",
