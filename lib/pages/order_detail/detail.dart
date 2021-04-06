@@ -137,11 +137,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         if (product.checked) return Color(0xffff7b00).withOpacity(0.07);
         return null; // Use the default value.
       }),
-      onSelectChanged: (bool v) {
-        setState(() {
-          product.setChecked = !product.getChecked;
-        });
-      },
       cells: [
         DataCell(
           SizedBox(
@@ -199,7 +194,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     final scanned = data.where((e) => e.checked == true);
     await showDialog(
         context: context,
-        barrierDismissible: true,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
@@ -221,18 +216,19 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                       fontSize: 20,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
                   Row(
                     children: [
-                      Text("Toplanan haryt:"),
+                      Text("Toplanan haryt:", style: TextStyle(fontSize: 18)),
                       Spacer(),
                       Text("${scanned.length}",
                           style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
-                      Text("Jemi haryt:"),
+                      Text("Jemi haryt:", style: TextStyle(fontSize: 18)),
                       Spacer(),
                       Text("${data.length}",
                           style: TextStyle(fontWeight: FontWeight.bold)),
@@ -283,12 +279,12 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     if (!mounted) return;
 
     setState(() {
-      // data.forEach((product) {
-      //   if (product.barcode == barcode) {
-      //     product.setChecked = !product.getChecked;
-      //   }
-      // });
-      _barcode = barcode;
+      data.forEach((product) {
+        if (product.barcode == barcode) {
+          if (product.getChecked) showSnackbar(context, "Haryt uje topladynyz");
+          product.setChecked = true;
+        }
+      });
     });
   }
 }
@@ -352,7 +348,7 @@ List<Product> data = [
     name: "Nescafe",
     count: 2,
     unit: "kg",
-    barcode: "Nescafe",
+    barcode: "4006067061288",
   ),
   Product(
     id: "1",
@@ -363,10 +359,10 @@ List<Product> data = [
   ),
   Product(
     id: "1",
-    name: "Bold",
+    name: "HES Premium",
     count: 2,
     unit: "gr",
-    barcode: "Bold",
+    barcode: "4833004770862",
   ),
   Product(
     id: "1",
